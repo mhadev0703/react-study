@@ -6,7 +6,7 @@ import { lightTheme, darkTheme } from "./theme";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
-  <ThemeProvider theme={darkTheme}>
+  <ThemeProvider theme={lightTheme}>
     <React.StrictMode>
       <App />
     </React.StrictMode>
