@@ -1,8 +1,15 @@
 import React from "react";
 import { users } from "./db";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
-function Home() {
+function Home() {   
+    const [readSearchParams, setSearchParams] = useSearchParams();
+    setTimeout(() => {
+        setSearchParams({
+            day: 'today',
+            tomorrow: 'friday'
+        });
+    }, 3000);
     
     return (
         <div>
