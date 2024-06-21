@@ -30,12 +30,32 @@ import { useForm } from "react-hook-form";
   );
 } */
 
+interface IForm {
+  email: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  password: string;
+  password1: string;
+}
+
 function ToDoList() {
-  const { register, handleSubmit, formState } = useForm();
-  const onValid = (data: any) => {
-    console.log(data);
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors }, 
+    setError,
+  } = useForm<IForm>({
+    defaultValues: {
+      email: "@gmail.com",
+    },
+  });
+  const onValid = (data: IForm) => {
+    if (data.password !== data.password1) {
+      setError("password1", { message: "Password are not the same."})
+    }
   };
-  console.log(formState.errors);
+  console.log(errors);
 
   return (
     <>
@@ -44,18 +64,31 @@ function ToDoList() {
         onSubmit={handleSubmit(onValid)}
       >
         <input 
-          {...register("email", { required: true })} 
+          {...register("email", { 
+            required: "Email is required.",
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@gmail.com$/,
+              message: "Only gmail.com emails allowed",
+            },
+          })} 
           placeholder="Email" 
-        /> 
-        <input {...register("firstName", { required: true })}
+        />
+        <span>{errors?.email?.message as string}</span> 
+        <input {...register("firstName", { required: "First name is required." })}
           placeholder="First Name" 
         />
-        <input {...register("lastName", { required: true })}
+        <span>{errors?.firstName?.message as string}</span> 
+        <input {...register("lastName", { required: "Last name is required." })}
           placeholder="Last Name" 
         />
-        <input {...register("username", { required: true, minLength: 5 })}
+        <span>{errors?.lastName?.message as string}</span> 
+        <input {...register("userName", { 
+            required: "User name is required.", 
+            minLength: 5,
+           })}
           placeholder="Username"
         />
+        <span>{errors?.userName?.message as string}</span> 
         <input {...register("password", { 
             required: "Password is required.",
             minLength: {
