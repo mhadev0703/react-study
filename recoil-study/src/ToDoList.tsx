@@ -37,6 +37,7 @@ interface IForm {
   userName: string;
   password: string;
   password1: string;
+  extraError?: string;
 }
 
 function ToDoList() {
@@ -52,8 +53,9 @@ function ToDoList() {
   });
   const onValid = (data: IForm) => {
     if (data.password !== data.password1) {
-      setError("password1", { message: "Password are not the same."})
+      setError("password1", { message: "Password are not the same."}, { shouldFocus: true })
     }
+    setError("extraError", { message: "Server offline." });
   };
   console.log(errors);
 
@@ -74,11 +76,16 @@ function ToDoList() {
           placeholder="Email" 
         />
         <span>{errors?.email?.message as string}</span> 
-        <input {...register("firstName", { required: "First name is required." })}
+        <input {...register("firstName", { 
+            required: "First name is required.",
+            validate: (value) => !value.includes("admin") ? "admin is not allowed to use" : true,
+          })}
           placeholder="First Name" 
         />
         <span>{errors?.firstName?.message as string}</span> 
-        <input {...register("lastName", { required: "Last name is required." })}
+        <input {...register("lastName", { 
+            required: "Last name is required." 
+          })}
           placeholder="Last Name" 
         />
         <span>{errors?.lastName?.message as string}</span> 
@@ -107,7 +114,9 @@ function ToDoList() {
           })}
           placeholder="Confirm PassWord" 
         />
+        <span>{errors?.password1?.message}</span>
         <button>Add</button>
+        <span>{errors?.extraError?.message}</span>
       </form>
     </>
   );
