@@ -51,6 +51,7 @@ function ToDoList() {
       email: "@gmail.com",
     },
   });
+
   const onValid = (data: IForm) => {
     if (data.password !== data.password1) {
       setError("password1", { message: "Password are not the same."}, { shouldFocus: true })
@@ -76,27 +77,36 @@ function ToDoList() {
           placeholder="Email" 
         />
         <span>{errors?.email?.message as string}</span> 
-        <input {...register("firstName", { 
+        <input 
+          {...register("firstName", { 
             required: "First name is required.",
-            validate: (value) => !value.includes("admin") ? "admin is not allowed to use" : true,
+            validate: {
+              noAdmin: (value) =>
+                value.includes("admin") ? "admin is not allowed to use" : true,
+              noMaster: (value) =>
+                value.includes("master") ? "master is not allowed to use" : true,
+            },
           })}
           placeholder="First Name" 
         />
         <span>{errors?.firstName?.message as string}</span> 
-        <input {...register("lastName", { 
+        <input 
+          {...register("lastName", { 
             required: "Last name is required." 
           })}
           placeholder="Last Name" 
         />
         <span>{errors?.lastName?.message as string}</span> 
-        <input {...register("userName", { 
+        <input 
+          {...register("userName", { 
             required: "User name is required.", 
             minLength: 5,
            })}
           placeholder="Username"
         />
         <span>{errors?.userName?.message as string}</span> 
-        <input {...register("password", { 
+        <input 
+          {...register("password", { 
             required: "Password is required.",
             minLength: {
               value: 10,
@@ -105,7 +115,8 @@ function ToDoList() {
           })}
           placeholder="Password" 
         />
-        <input {...register("password1", { 
+        <input 
+          {...register("password1", { 
             required: "Check your password.", 
             minLength: {
               value: 10,
