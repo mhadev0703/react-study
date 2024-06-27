@@ -1,136 +1,54 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-
-/* function ToDoList() {
-  const [toDo, setToDo] = useState("");
-  const [toDoError, setToDoError] = useState("");
-  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const {
-      currentTarget: { value },
-    } = event;
-    setToDo(value);
-  };
-
-  const onSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (toDo.length < 10) {
-      return setToDoError("To do should be longer");
-    }
-    console.log("submit");
-  };
-
-  return (
-    <>
-      <form onSubmit={onSubmit}>
-        <input onChange={onChange} value={toDo} placeholder="Write a to do" />
-        <button>Add</button>
-        {toDoError !== "" ? toDoError : null}
-      </form>
-    </>
-  );
-} */
+import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 interface IForm {
-  email: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  password: string;
-  password1: string;
-  extraError?: string;
+  toDo: string;
 }
 
-function ToDoList() {
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors }, 
-    setError,
-  } = useForm<IForm>({
-    defaultValues: {
-      email: "@gmail.com",
-    },
-  });
+interface IToDo {
+  text: string;
+  id: number;
+  category: "TO_DO" | "DOING" | "DONE";
+};
 
-  const onValid = (data: IForm) => {
-    if (data.password !== data.password1) {
-      setError("password1", { message: "Password are not the same."}, { shouldFocus: true })
-    }
-    setError("extraError", { message: "Server offline." });
+const toDoState = atom<IToDo[]>({
+  key: "toDo",
+  default: [],
+});
+
+function ToDoList() {
+  const [toDo, setToDo] = useRecoilState(toDoState);
+  const { register, handleSubmit, setValue } = useForm<IForm>();
+
+  const handleValid = ({toDo}: IForm) => {
+    // ... makes setToDo returns value inside of the array
+    setToDo(oldToDo => [{ text: toDo, id: Date.now() ,category: "TO_DO" }, ...oldToDo]);
+    // To make form empty after user clicks submit
+    setValue("toDo", "");
   };
-  console.log(errors);
+
+  console.log(toDo);
 
   return (
     <>
-      <form 
-        style={{display: "flex", flexDirection: "column" }} 
-        onSubmit={handleSubmit(onValid)}
-      >
+      <h1>To Do</h1>
+      <hr />
+      <form onSubmit={handleSubmit(handleValid)}>
         <input 
-          {...register("email", { 
-            required: "Email is required.",
-            pattern: {
-              value: /^[A-Za-z0-9._%+-]+@gmail.com$/,
-              message: "Only gmail.com emails allowed",
-            },
+          {...register("toDo", {
+            required: "Please fill in a To Do.",
           })} 
-          placeholder="Email" 
+          placeholder="Write a to do" 
         />
-        <span>{errors?.email?.message as string}</span> 
-        <input 
-          {...register("firstName", { 
-            required: "First name is required.",
-            validate: {
-              noAdmin: (value) =>
-                value.includes("admin") ? "admin is not allowed to use" : true,
-              noMaster: (value) =>
-                value.includes("master") ? "master is not allowed to use" : true,
-            },
-          })}
-          placeholder="First Name" 
-        />
-        <span>{errors?.firstName?.message as string}</span> 
-        <input 
-          {...register("lastName", { 
-            required: "Last name is required." 
-          })}
-          placeholder="Last Name" 
-        />
-        <span>{errors?.lastName?.message as string}</span> 
-        <input 
-          {...register("userName", { 
-            required: "User name is required.", 
-            minLength: 5,
-           })}
-          placeholder="Username"
-        />
-        <span>{errors?.userName?.message as string}</span> 
-        <input 
-          {...register("password", { 
-            required: "Password is required.",
-            minLength: {
-              value: 10,
-              message: "Your password is too short."
-            },
-          })}
-          placeholder="Password" 
-        />
-        <input 
-          {...register("password1", { 
-            required: "Check your password.", 
-            minLength: {
-              value: 10,
-              message: "Your password is too short."
-            }, 
-          })}
-          placeholder="Confirm PassWord" 
-        />
-        <span>{errors?.password1?.message}</span>
         <button>Add</button>
-        <span>{errors?.extraError?.message}</span>
       </form>
+      <ul>
+        {toDo.map(toDo =>
+          <li key={toDo.id}>{toDo.text}</li>
+        )}
+      </ul>
     </>
   );
-}
+} 
 
 export default ToDoList;
