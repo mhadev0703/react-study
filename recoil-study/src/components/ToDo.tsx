@@ -1,26 +1,21 @@
-import { useRecoilState } from "recoil";
+import React from "react";
+import { useSetRecoilState } from "recoil";
 import { IToDo, toDoState } from "../atoms";
 
 function ToDo({ text, category, id }: IToDo) {
-  const setToDos = useRecoilState(toDoState);
-  
+  //const [toDo, setToDo] = useRecoilState<IToDo[]>(toDoState);
+  const setToDos = useSetRecoilState(toDoState);
+
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { name },
-    } = event;
+    } = event;  
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
-      const oldToDo = oldToDos[targetIndex];
       const newToDo = { text, id, category: name };
-      console.log(
-        "replace the to do in the index",
-        targetIndex,
-        "with",
-        newToDo,
-      );
       return oldToDos;
-    }); 
-  }; 
+    });
+  };
 
   return (
     <li>
@@ -29,7 +24,7 @@ function ToDo({ text, category, id }: IToDo) {
         <button name="DOING" onClick={onClick}>
           Doing
         </button>
-      )} 
+      )}
       {category !== "TO_DO" && (
         <button name="TO_DO" onClick={onClick}>
           To Do
