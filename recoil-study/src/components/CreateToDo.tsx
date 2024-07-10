@@ -1,18 +1,20 @@
 import { useForm } from "react-hook-form";
-import { useSetRecoilState } from "recoil";
-import { toDoState } from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { categoryState, toDoState } from "../atoms";
 
 interface IForm {
   toDo: string;
 }
 
 function CreateToDo() {
-  const setToDo = useSetRecoilState(toDoState);
+  const setToDos = useSetRecoilState(toDoState);
+  const category = useRecoilValue(categoryState);
   const { register, handleSubmit, setValue } = useForm<IForm>();
-  const handleValid = ({toDo}: IForm) => {
-    // ... makes setToDo returns value inside of the array
-    setToDo(oldToDo => [{ text: toDo, id: Date.now() ,category: "TO_DO" }, ...oldToDo]);
-    // To make form empty after user clicks submit
+  const handleValid = ({ toDo }: IForm) => {
+    setToDos((oldToDos) => [
+      { text: toDo, id: Date.now(), category }, 
+      ...oldToDos,
+    ]);
     setValue("toDo", "");
   };
 
