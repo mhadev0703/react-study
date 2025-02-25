@@ -36,8 +36,8 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
-      "pretter/prettier": "error",
+      "prettier/prettier": "error",
     },
   },
-  eslintConfigPrettier
+  eslintConfigPrettier,
 ]
